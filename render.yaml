@@ -1,0 +1,6 @@
+services:
+  - type: web
+    name: nobita-x-bomber-bot
+    runtime: image
+    buildCommand: docker build -t nobita-x-bomber-bot .
+    startCommand: docker run -p 5000:5000 nobita-x-bomber-bot

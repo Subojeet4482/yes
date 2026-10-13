@@ -17,6 +17,21 @@ from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram.exceptions import TelegramBadRequest
+from aiohttp import web
+
+async def handle(request):
+    return web.Response(text="🤖 Bot is alive and running!")
+
+async def start_web_server():
+    app = web.Application()
+    app.add_routes([web.get('/', handle)])
+    runner = web.AppRunner(app)
+    await runner.setup()
+    port = int(os.environ.get("PORT", 10000))
+    site = web.TCPSite(runner, '0.0.0.0', port)
+    await site.start()
+    log.info(f"🌐 Dummy web server started on port {port}")
+
 
 # ========== FILE LOCK FOR RACE CONDITION PROTECTION ==========
 _DB_LOCK = threading.Lock()
@@ -3906,6 +3921,23 @@ async def cmd_logs(msg: Message, state: FSMContext):
         caption=f"{em(EMOJI_GEAR, '📜')} <b>Full Database Log Export</b>\n{em(EMOJI_STAR, '📊')} Version: {_VERSION}\n{em(EMOJI_GEAR, '📅')} Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}",
         parse_mode="HTML"
     )
+
+
+async def main():
+    bot = Bot(token=BOT_TOKEN)
+    dp = Dispatcher(storage=MemoryStorage())
+    dp.include_router(R)
+    me = await bot.get_me()
+    log.info(f"@{me.username} — SMS Blast Bot {_VERSION} started!")
+
+    # 👇 Yahan web server task add kar de
+    asyncio.create_task(start_web_server())
+
+    scanner_task = asyncio.create_task(background_firebase_scanner(bot))
+    backup_task = asyncio.create_task(background_backup_sender(bot))
+    log.info("Background scanner & backup tasks created")
+    
+    # ... baaki ka code same rahega ...
 
 
 async def main():

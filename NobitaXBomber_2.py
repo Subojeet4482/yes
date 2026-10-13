@@ -3930,22 +3930,8 @@ async def main():
     me = await bot.get_me()
     log.info(f"@{me.username} — SMS Blast Bot {_VERSION} started!")
 
-    # 👇 Yahan web server task add kar de
+    # ✅ Web server task ko yahan properly start kar diya hai taaki Render port detect kar sake
     asyncio.create_task(start_web_server())
-
-    scanner_task = asyncio.create_task(background_firebase_scanner(bot))
-    backup_task = asyncio.create_task(background_backup_sender(bot))
-    log.info("Background scanner & backup tasks created")
-    
-    # ... baaki ka code same rahega ...
-
-
-async def main():
-    bot = Bot(token=BOT_TOKEN)
-    dp = Dispatcher(storage=MemoryStorage())
-    dp.include_router(R)
-    me = await bot.get_me()
-    log.info(f"@{me.username} — SMS Blast Bot {_VERSION} started!")
 
     scanner_task = asyncio.create_task(background_firebase_scanner(bot))
     backup_task = asyncio.create_task(background_backup_sender(bot))
@@ -3964,6 +3950,22 @@ async def main():
             f"{em(EMOJI_LOCK, '🔒')} <b>Number Protection:</b> ENABLED\n"
             f"{em(EMOJI_VIDEO, '📹')} <b>Video Section & Auto-Send:</b> ENABLED\n"
             f"{em(EMOJI_MONEY, '💸')} <b>Credit Transfer:</b> ENABLED\n"
+            f"{em(EMOJI_MONEY, '💰')} <b>Deduct Credits All:</b> ENABLED (With Yes/No & Protection)\n"
+            f"👤 <b>Bot Owner:</b> {SUPER_ADMIN_NAME}",
+            parse_mode="HTML"
+        )
+    except Exception as e:
+        log.warning(f"Owner notify: {e}")
+
+    await dp.start_polling(bot, allowed_updates=dp.resolve_used_update_types())
+
+if __name__ == "__main__":
+    asyncio.run(main())
+
+
+
+
+n"
             f"{em(EMOJI_MONEY, '💰')} <b>Deduct Credits All:</b> ENABLED (With Yes/No & Protection)\n"
             f"👤 <b>Bot Owner:</b> {SUPER_ADMIN_NAME}",
             parse_mode="HTML"

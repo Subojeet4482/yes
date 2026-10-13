@@ -3965,15 +3965,4 @@ if __name__ == "__main__":
 
 
 
-n"
-            f"{em(EMOJI_MONEY, '💰')} <b>Deduct Credits All:</b> ENABLED (With Yes/No & Protection)\n"
-            f"👤 <b>Bot Owner:</b> {SUPER_ADMIN_NAME}",
-            parse_mode="HTML"
-        )
-    except Exception as e:
-        log.warning(f"Owner notify: {e}")
 
-    await dp.start_polling(bot, allowed_updates=dp.resolve_used_update_types())
-
-if __name__ == "__main__":
-    asyncio.run(main())
